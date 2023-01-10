@@ -1,3 +1,4 @@
+# Ensure flipper gets configured first
 require "flipper/railtie"
 
 module Flipper
@@ -9,7 +10,7 @@ module Flipper
         config.flipper.cloud_path = "_flipper"
       end
 
-      initializer "flipper.cloud.default", before: :load_config_initializers do |app|
+      config.before_initialize do |app|
         Flipper.configure do |config|
           config.default do
             if ENV["FLIPPER_CLOUD_TOKEN"]
