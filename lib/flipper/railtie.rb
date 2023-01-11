@@ -8,21 +8,21 @@ module Flipper
         instrumenter: ENV.fetch('FLIPPER_INSTRUMENTER', 'ActiveSupport::Notifications').constantize,
         log: ENV.fetch('FLIPPER_LOG', 'true').casecmp('true').zero?
       )
-    end
-
-    config.before_initialize do |app|
-      Flipper.configure do |config|
-        config.default do
-          Flipper.new(config.adapter, instrumenter: app.config.flipper.instrumenter)
-        end
-      end
 
       ActiveSupport.on_load(:active_record) do
         ActiveRecord::Base.include Flipper::Identifier
       end
     end
 
-    initializer "flipper.memoizer", after: :engines_blank_point do |app|
+    initializer "flipper.default", after: :bootstrap_hook do |app|
+      Flipper.configure do |config|
+        config.default do
+          Flipper.new(config.adapter, instrumenter: app.config.flipper.instrumenter)
+        end
+      end
+    end
+
+    initializer "flipper.finialize", after: :engines_blank_point do |app|
       flipper = app.config.flipper
 
       if flipper.memoize
@@ -32,10 +32,8 @@ module Flipper
           if: flipper.memoize.respond_to?(:call) ? flipper.memoize : nil
         }
       end
-    end
 
-    config.after_initialize do
-      if config.flipper.log && config.flipper.instrumenter == ActiveSupport::Notifications
+      if flipper.log && flipper.instrumenter == ActiveSupport::Notifications
         require "flipper/instrumentation/log_subscriber"
       end
     end
