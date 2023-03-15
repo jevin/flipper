@@ -9,10 +9,9 @@ end
 module Flipper
   module UI
     class Middleware
-      def initialize(app, options = {})
+      def initialize(app, env_key: 'flipper')
         @app = app
-        @env_key = options.fetch(:env_key, 'flipper')
-        @flipper = options.fetch(:flipper) { Flipper }
+        @env_key = env_key
 
         @action_collection = ActionCollection.new
 

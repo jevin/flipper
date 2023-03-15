@@ -21,19 +21,14 @@ module Flipper
       #          the local on an interval.
       # interval - The Float or Integer number of seconds between syncs from
       # remote to local. Default value is set in IntervalSynchronizer.
-      def initialize(local, remote, options = {})
+      def initialize(local, remote, synchronizer: nil, interval: IntervalSynchronizer::DEFAULT_INTERVAL, **synchronizer_options)
         @name = :sync
         @local = local
         @remote = remote
-        @synchronizer = options.fetch(:synchronizer) do
-          sync_options = {
-            raise: false,
-          }
-          instrumenter = options[:instrumenter]
-          sync_options[:instrumenter] = instrumenter if instrumenter
-          synchronizer = Synchronizer.new(@local, @remote, sync_options)
-          IntervalSynchronizer.new(synchronizer, interval: options[:interval])
-        end
+        @synchronizer = synchronizer || IntervalSynchronizer.new(
+          Synchronizer.new(@local, @remote, raise_exceptions: false, **synchronizer_options),
+          interval: interval,
+        )
         synchronize
       end
 

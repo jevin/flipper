@@ -9,9 +9,9 @@ end
 module Flipper
   module Api
     class Middleware
-      def initialize(app, options = {})
+      def initialize(app, env_key: 'flipper')
         @app = app
-        @env_key = options.fetch(:env_key, 'flipper')
+        @env_key = env_key
 
         @action_collection = ActionCollection.new
         @action_collection.add Api::V1::Actions::PercentageOfTimeGate

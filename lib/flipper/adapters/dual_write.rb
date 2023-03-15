@@ -11,7 +11,7 @@ module Flipper
       # local - The local flipper adapter that should serve reads.
       # remote - The remote flipper adapter that writes should go to first (in
       #          addition to the local adapter).
-      def initialize(local, remote, options = {})
+      def initialize(local, remote)
         @name = :dual_write
         @local = local
         @remote = remote

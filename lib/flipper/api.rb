@@ -7,8 +7,7 @@ module Flipper
   module Api
     CONTENT_TYPE = 'application/json'.freeze
 
-    def self.app(flipper = nil, options = {})
-      env_key = options.fetch(:env_key, 'flipper')
+    def self.app(flipper = nil, env_key: 'flipper')
       app = ->(_) { [404, { 'Content-Type'.freeze => CONTENT_TYPE }, ['{}'.freeze]] }
       builder = Rack::Builder.new
       yield builder if block_given?

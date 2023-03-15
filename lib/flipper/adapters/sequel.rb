@@ -43,10 +43,10 @@ module Flipper
       #
       # Allowing the overriding of the default feature/gate classes means you
       # can roll your own tables and what not, if you so desire.
-      def initialize(options = {})
-        @name = options.fetch(:name, :sequel)
-        @feature_class = options.fetch(:feature_class) { Feature }
-        @gate_class = options.fetch(:gate_class) { Gate }
+      def initialize(name: :sequel, feature_class: Feature, gate_class: Gate)
+        @name = name
+        @feature_class = feature_class
+        @gate_class = gate_class
       end
 
       # Public: The set of known features.
@@ -169,15 +169,14 @@ module Flipper
         raise "#{data_type} is not supported by this adapter"
       end
 
-      def set(feature, gate, thing, options = {})
-        clear_feature = options.fetch(:clear, false)
+      def set(feature, gate, thing, clear: false)
         args = {
           feature_key: feature.key,
           key: gate.key.to_s,
         }
 
         @gate_class.db.transaction do
-          clear(feature) if clear_feature
+          self.clear(feature) if clear
           @gate_class.where(args).delete
 
           begin

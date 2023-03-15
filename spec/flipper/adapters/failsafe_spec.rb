@@ -1,7 +1,7 @@
 require 'flipper/adapters/failsafe'
 
 RSpec.describe Flipper::Adapters::Failsafe do
-  subject { described_class.new(memory_adapter, options) }
+  subject { described_class.new(memory_adapter, **options) }
 
   let(:memory_adapter) { Flipper::Adapters::Memory.new }
   let(:options) { {} }

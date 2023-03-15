@@ -23,11 +23,11 @@ module Flipper
       # options - The Hash of options.
       #           :instrumenter - What to use to instrument all the things.
       #
-      def initialize(adapter, options = {})
+      def initialize(adapter, instrumenter: Instrumenters::Noop)
         super(adapter)
         @adapter = adapter
         @name = :instrumented
-        @instrumenter = options.fetch(:instrumenter, Instrumenters::Noop)
+        @instrumenter = instrumenter
       end
 
       # Public

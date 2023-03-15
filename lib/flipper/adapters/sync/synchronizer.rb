@@ -16,11 +16,11 @@ module Flipper
         # options - The Hash of options.
         #           :instrumenter - The instrumenter used to instrument.
         #           :raise - Should errors be raised (default: true).
-        def initialize(local, remote, options = {})
+        def initialize(local, remote, instrumenter: Instrumenters::Noop, raise_exceptions: true)
           @local = local
           @remote = remote
-          @instrumenter = options.fetch(:instrumenter, Instrumenters::Noop)
-          @raise = options.fetch(:raise, true)
+          @instrumenter = instrumenter
+          @raise_exceptions = raise_exceptions
         end
 
         # Public: Forces a sync.
@@ -55,7 +55,7 @@ module Flipper
           nil
         rescue => exception
           @instrumenter.instrument("synchronizer_exception.flipper", exception: exception)
-          raise if @raise
+          raise if @raise_exceptions
         end
       end
     end

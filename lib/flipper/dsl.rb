@@ -18,9 +18,8 @@ module Flipper
     # options - The Hash of options.
     #           :instrumenter - What should be used to instrument all the things.
     #           :memoize - Should adapter be wrapped by memoize adapter or not.
-    def initialize(adapter, options = {})
-      @instrumenter = options.fetch(:instrumenter, Instrumenters::Noop)
-      memoize = options.fetch(:memoize, true)
+    def initialize(adapter, instrumenter: Instrumenters::Noop, memoize: true)
+      @instrumenter = instrumenter
       adapter = Adapters::Memoizable.new(adapter) if memoize
       @adapter = adapter
       @memoized_features = {}

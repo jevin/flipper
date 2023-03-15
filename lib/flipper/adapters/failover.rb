@@ -16,13 +16,12 @@ module Flipper
       #                           primary is updated
       #             :errors - Array of exception types for which to failover
 
-      def initialize(primary, secondary, options = {})
+      def initialize(primary, secondary, dual_write: false, errors: [ StandardError ])
         @name = :failover
         @primary = primary
         @secondary = secondary
-
-        @dual_write = options.fetch(:dual_write, false)
-        @errors = options.fetch(:errors, [ StandardError ])
+        @dual_write = dual_write
+        @errors = errors
       end
 
       def features

@@ -1,9 +1,5 @@
 module Flipper
   class Gate
-    # Public
-    def initialize(options = {})
-    end
-
     # Public: The name of the gate. Implemented in subclass.
     def name
       raise 'Not implemented'
@@ -25,7 +21,7 @@ module Flipper
     # Internal: Check if a gate is open for a thing. Implemented in subclass.
     #
     # Returns true if gate open for thing, false if not.
-    def open?(_thing, _value, _options = {})
+    def open?(_context)
       false
     end
 

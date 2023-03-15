@@ -7,63 +7,63 @@ RSpec.describe Flipper::Cloud::Configuration do
   end
 
   it "can set token" do
-    instance = described_class.new(required_options)
+    instance = described_class.new(**required_options)
     expect(instance.token).to eq(required_options[:token])
   end
 
   it "can set token from ENV var" do
     ENV["FLIPPER_CLOUD_TOKEN"] = "from_env"
-    instance = described_class.new(required_options.reject { |k, v| k == :token })
+    instance = described_class.new(**required_options.reject { |k, v| k == :token })
     expect(instance.token).to eq("from_env")
   end
 
   it "can set instrumenter" do
     instrumenter = Object.new
-    instance = described_class.new(required_options.merge(instrumenter: instrumenter))
+    instance = described_class.new(**required_options.merge(instrumenter: instrumenter))
     expect(instance.instrumenter).to be(instrumenter)
   end
 
   it "can set read_timeout" do
-    instance = described_class.new(required_options.merge(read_timeout: 5))
+    instance = described_class.new(**required_options.merge(read_timeout: 5))
     expect(instance.read_timeout).to eq(5)
   end
 
   it "can set read_timeout from ENV var" do
     ENV["FLIPPER_CLOUD_READ_TIMEOUT"] = "9"
-    instance = described_class.new(required_options.reject { |k, v| k == :read_timeout })
+    instance = described_class.new(**required_options.reject { |k, v| k == :read_timeout })
     expect(instance.read_timeout).to eq(9)
   end
 
   it "can set open_timeout" do
-    instance = described_class.new(required_options.merge(open_timeout: 5))
+    instance = described_class.new(**required_options.merge(open_timeout: 5))
     expect(instance.open_timeout).to eq(5)
   end
 
   it "can set open_timeout from ENV var" do
     ENV["FLIPPER_CLOUD_OPEN_TIMEOUT"] = "9"
-    instance = described_class.new(required_options.reject { |k, v| k == :open_timeout })
+    instance = described_class.new(**required_options.reject { |k, v| k == :open_timeout })
     expect(instance.open_timeout).to eq(9)
   end
 
   it "can set write_timeout" do
-    instance = described_class.new(required_options.merge(write_timeout: 5))
+    instance = described_class.new(**required_options.merge(write_timeout: 5))
     expect(instance.write_timeout).to eq(5)
   end
 
   it "can set write_timeout from ENV var" do
     ENV["FLIPPER_CLOUD_WRITE_TIMEOUT"] = "9"
-    instance = described_class.new(required_options.reject { |k, v| k == :write_timeout })
+    instance = described_class.new(**required_options.reject { |k, v| k == :write_timeout })
     expect(instance.write_timeout).to eq(9)
   end
 
   it "can set sync_interval" do
-    instance = described_class.new(required_options.merge(sync_interval: 1))
+    instance = described_class.new(**required_options.merge(sync_interval: 1))
     expect(instance.sync_interval).to eq(1)
   end
 
   it "can set sync_interval from ENV var" do
     ENV["FLIPPER_CLOUD_SYNC_INTERVAL"] = "5"
-    instance = described_class.new(required_options.reject { |k, v| k == :sync_interval })
+    instance = described_class.new(**required_options.reject { |k, v| k == :sync_interval })
     expect(instance.sync_interval).to eq(5)
   end
 
@@ -71,13 +71,13 @@ RSpec.describe Flipper::Cloud::Configuration do
     # The initial sync of http to local invokes this web request.
     stub_request(:get, /flippercloud\.io/).to_return(status: 200, body: "{}")
 
-    instance = described_class.new(required_options.merge(sync_interval: 1))
+    instance = described_class.new(**required_options.merge(sync_interval: 1))
     poller = instance.send(:poller)
     expect(poller.interval).to eq(1)
   end
 
   it "can set debug_output" do
-    instance = described_class.new(required_options.merge(debug_output: STDOUT))
+    instance = described_class.new(**required_options.merge(debug_output: STDOUT))
     expect(instance.debug_output).to eq(STDOUT)
   end
 
@@ -85,7 +85,7 @@ RSpec.describe Flipper::Cloud::Configuration do
     # The initial sync of http to local invokes this web request.
     stub_request(:get, /flippercloud\.io/).to_return(status: 200, body: "{}")
 
-    instance = described_class.new(required_options)
+    instance = described_class.new(**required_options)
     expect(instance.adapter).to be_instance_of(Flipper::Adapters::Poll)
   end
 
@@ -93,7 +93,7 @@ RSpec.describe Flipper::Cloud::Configuration do
     # The initial sync of http to local invokes this web request.
     stub_request(:get, /flippercloud\.io/).to_return(status: 200, body: "{}")
 
-    instance = described_class.new(required_options)
+    instance = described_class.new(**required_options)
     instance.adapter do |adapter|
       Flipper::Adapters::Instrumented.new(adapter)
     end
@@ -101,34 +101,33 @@ RSpec.describe Flipper::Cloud::Configuration do
   end
 
   it "defaults url" do
-    instance = described_class.new(required_options.reject { |k, v| k == :url })
+    instance = described_class.new(**required_options.reject { |k, v| k == :url })
     expect(instance.url).to eq("https://www.flippercloud.io/adapter")
   end
 
   it "can override url using options" do
-    options = required_options.merge(url: "http://localhost:5000/adapter")
-    instance = described_class.new(options)
+    instance = described_class.new(**required_options.merge(url: "http://localhost:5000/adapter"))
     expect(instance.url).to eq("http://localhost:5000/adapter")
 
-    instance = described_class.new(required_options)
+    instance = described_class.new(**required_options)
     instance.url = "http://localhost:5000/adapter"
     expect(instance.url).to eq("http://localhost:5000/adapter")
   end
 
   it "can override URL using ENV var" do
     ENV["FLIPPER_CLOUD_URL"] = "https://example.com"
-    instance = described_class.new(required_options.reject { |k, v| k == :url })
+    instance = described_class.new(**required_options.reject { |k, v| k == :url })
     expect(instance.url).to eq("https://example.com")
   end
 
   it "defaults sync_method to :poll" do
-    instance = described_class.new(required_options)
+    instance = described_class.new(**required_options)
 
     expect(instance.sync_method).to eq(:poll)
   end
 
   it "sets sync_method to :webhook if sync_secret provided" do
-    instance = described_class.new(required_options.merge({
+    instance = described_class.new(**required_options.merge({
       sync_secret: "secret",
     }))
 
@@ -138,20 +137,20 @@ RSpec.describe Flipper::Cloud::Configuration do
 
   it "sets sync_method to :webhook if FLIPPER_CLOUD_SYNC_SECRET set" do
     ENV["FLIPPER_CLOUD_SYNC_SECRET"] = "abc"
-    instance = described_class.new(required_options)
+    instance = described_class.new(**required_options)
 
     expect(instance.sync_method).to eq(:webhook)
     expect(instance.adapter).to be_instance_of(Flipper::Adapters::DualWrite)
   end
 
   it "can set sync_secret" do
-    instance = described_class.new(required_options.merge(sync_secret: "from_config"))
+    instance = described_class.new(**required_options.merge(sync_secret: "from_config"))
       expect(instance.sync_secret).to eq("from_config")
   end
 
   it "can override sync_secret using ENV var" do
     ENV["FLIPPER_CLOUD_SYNC_SECRET"] = "from_env"
-    instance = described_class.new(required_options.reject { |k, v| k == :sync_secret })
+    instance = described_class.new(**required_options.reject { |k, v| k == :sync_secret })
     expect(instance.sync_secret).to eq("from_env")
   end
 
@@ -228,7 +227,7 @@ RSpec.describe Flipper::Cloud::Configuration do
           'Flipper-Cloud-Token'=>'asdf',
         },
       }).to_return(status: 200, body: body, headers: {})
-    instance = described_class.new(required_options)
+    instance = described_class.new(**required_options)
     instance.sync
 
     # Check that remote was fetched.
@@ -245,7 +244,7 @@ RSpec.describe Flipper::Cloud::Configuration do
   it "can setup brow to report events to cloud" do
     # skip logging brow
     Brow.logger = Logger.new(File::NULL)
-    brow = described_class.new(required_options).brow
+    brow = described_class.new(**required_options).brow
 
     stub = stub_request(:post, "https://www.flippercloud.io/adapter/events")
       .with { |request|

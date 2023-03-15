@@ -29,10 +29,10 @@ module Flipper
     # options - The Hash of options.
     #           :instrumenter - What to use to instrument all the things.
     #
-    def initialize(name, adapter, options = {})
+    def initialize(name, adapter, instrumenter: Instrumenters::Noop)
       @name = name
       @key = name.to_s
-      @instrumenter = options.fetch(:instrumenter, Instrumenters::Noop)
+      @instrumenter = instrumenter
       @adapter = adapter
     end
 

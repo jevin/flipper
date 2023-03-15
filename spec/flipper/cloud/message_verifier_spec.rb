@@ -89,16 +89,9 @@ RSpec.describe Flipper::Cloud::MessageVerifier do
 
   private
 
-  def generate_header(options = {})
-    options[:secret] ||= secret
-    options[:version] ||= "v1"
-
-    message_verifier = Flipper::Cloud::MessageVerifier.new(secret: options[:secret], version: options[:version])
-
-    options[:timestamp] ||= timestamp
-    options[:payload] ||= payload
-    options[:signature] ||= message_verifier.generate(options[:payload], options[:timestamp])
-
-    Flipper::Cloud::MessageVerifier.header(options[:signature], options[:timestamp], options[:version])
+  def generate_header(secret: self.secret, version: "v1", timestamp: self.timestamp, payload: self.payload, signature: nil)
+    message_verifier = Flipper::Cloud::MessageVerifier.new(secret: secret, version: version)
+    signature ||= message_verifier.generate(payload, timestamp)
+    Flipper::Cloud::MessageVerifier.header(signature, timestamp, version)
   end
 end

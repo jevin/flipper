@@ -73,7 +73,7 @@ module Flipper
       # occur or not.
       attr_accessor :sync_secret
 
-      def initialize(options = {})
+      def initialize(**options)
         @token = options.fetch(:token) { ENV["FLIPPER_CLOUD_TOKEN"] }
 
         if @token.nil?
@@ -124,10 +124,9 @@ module Flipper
       attr_writer :url
 
       def sync
-        Flipper::Adapters::Sync::Synchronizer.new(local_adapter, http_adapter, {
-          instrumenter: instrumenter,
-          interval: sync_interval,
-        }).call
+        Flipper::Adapters::Sync::Synchronizer.new(local_adapter, http_adapter,
+          instrumenter: instrumenter
+        ).call
       end
 
       def brow
@@ -164,11 +163,11 @@ module Flipper
       end
 
       def poller
-        Flipper::Adapters::Poll::Poller.get(@url + @token, {
+        Flipper::Adapters::Poll::Poller.get(@url + @token,
           interval: sync_interval,
           remote_adapter: http_adapter,
           instrumenter: instrumenter,
-        }).tap(&:start)
+        ).tap(&:start)
       end
 
       def poll_adapter
@@ -176,7 +175,7 @@ module Flipper
       end
 
       def http_adapter
-        Flipper::Adapters::Http.new({
+        Flipper::Adapters::Http.new(
           url: @url,
           read_timeout: @read_timeout,
           open_timeout: @open_timeout,
@@ -186,7 +185,7 @@ module Flipper
           headers: {
             "Flipper-Cloud-Token" => @token,
           },
-        })
+        )
       end
     end
   end

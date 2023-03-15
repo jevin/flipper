@@ -12,9 +12,9 @@ module Flipper
       # options   - Hash of options:
       #             :errors - Array of exception types for which to fail safe
 
-      def initialize(adapter, options = {})
+      def initialize(adapter, errors: [StandardError])
         @adapter = adapter
-        @errors = options.fetch(:errors, [StandardError])
+        @errors = errors
         @name = :failsafe
       end
 

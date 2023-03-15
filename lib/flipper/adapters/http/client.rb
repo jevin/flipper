@@ -18,16 +18,16 @@ module Flipper
         attr_reader :basic_auth_username, :basic_auth_password
         attr_reader :read_timeout, :open_timeout, :write_timeout, :max_retries, :debug_output
 
-        def initialize(options = {})
-          @uri = URI(options.fetch(:url))
-          @headers = DEFAULT_HEADERS.merge(options[:headers] || {})
-          @basic_auth_username = options[:basic_auth_username]
-          @basic_auth_password = options[:basic_auth_password]
-          @read_timeout = options[:read_timeout]
-          @open_timeout = options[:open_timeout]
-          @write_timeout = options[:write_timeout]
-          @max_retries = options.key?(:max_retries) ? options[:max_retries] : 0
-          @debug_output = options[:debug_output]
+        def initialize(url:, headers: {}, basic_auth_username: nil, basic_auth_password: nil, open_timeout: nil, read_timeout: nil, write_timeout: nil, max_retries: 0, debug_output: nil)
+          @uri = URI(url)
+          @headers = DEFAULT_HEADERS.merge(headers)
+          @basic_auth_username = basic_auth_username
+          @basic_auth_password = basic_auth_password
+          @read_timeout = read_timeout
+          @open_timeout = open_timeout
+          @write_timeout = write_timeout
+          @max_retries = max_retries
+          @debug_output = debug_output
         end
 
         def get(path)

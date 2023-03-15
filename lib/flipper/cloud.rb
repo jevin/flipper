@@ -15,16 +15,13 @@ module Flipper
     # options - The Hash of options. See Flipper::Cloud::Configuration.
     # block - The block that configuration will be yielded to allowing you to
     #         customize this cloud instance and its adapter.
-    def self.new(options = {})
-      configuration = Configuration.new(options)
+    def self.new(**options)
+      configuration = Configuration.new(**options)
       yield configuration if block_given?
       DSL.new(configuration)
     end
 
-    def self.app(flipper = nil, options = {})
-      env_key = options.fetch(:env_key, 'flipper')
-      memoizer_options = options.fetch(:memoizer_options, {})
-
+    def self.app(flipper = nil, env_key: 'flipper', memoizer_options: {})
       app = ->(_) { [404, { 'Content-Type'.freeze => 'application/json'.freeze }, ['{}'.freeze]] }
       builder = Rack::Builder.new
       yield builder if block_given?

@@ -14,22 +14,21 @@ module Flipper
         end
         private_class_method :instances
 
-        def self.get(key, options = {})
-          instances.compute_if_absent(key) { new(options) }
+        def self.get(key, **options)
+          instances.compute_if_absent(key) { new(**options) }
         end
 
         def self.reset
           instances.each {|_,poller| poller.stop }.clear
         end
 
-        def initialize(options = {})
+        def initialize(remote_adapter:, instrumenter: Instrumenters::Noop, interval: 10, start_automatically: true, shutdown_automatically: true)
           @thread = nil
           @pid = Process.pid
           @mutex = Mutex.new
           @adapter = Memory.new
-          @instrumenter = options.fetch(:instrumenter, Instrumenters::Noop)
-          @remote_adapter = options.fetch(:remote_adapter)
-          @interval = options.fetch(:interval, 10).to_f
+          @instrumenter = instrumenter
+          @interval = interval.to_f
           @lock = Concurrent::ReadWriteLock.new
           @last_synced_at = Concurrent::AtomicFixnum.new(0)
 
@@ -38,11 +37,8 @@ module Flipper
             @interval = 1
           end
 
-          @start_automatically = options.fetch(:start_automatically, true)
-
-          if options.fetch(:shutdown_automatically, true)
-            at_exit { stop }
-          end
+          # start if start_automatically
+          at_exit { stop } if shutdown_automatically
         end
 
         def adapter

@@ -10,9 +10,9 @@ module Flipper
       # Internal: The root path to match for requests.
       ROOT_PATH = %r{\A/\Z}
 
-      def initialize(app, options = {})
+      def initialize(app, env_key: 'flipper')
         @app = app
-        @env_key = options.fetch(:env_key, 'flipper')
+        @env_key = env_key
       end
 
       def call(env)

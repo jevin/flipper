@@ -5,7 +5,7 @@ require 'pstore'
 require 'redis'
 
 RSpec.describe Flipper::Adapters::Failover do
-  subject { described_class.new(primary, secondary, options) }
+  subject { described_class.new(primary, secondary, **options) }
 
   let(:primary) { Flipper::Adapters::Memory.new }
   let(:secondary) { Flipper::Adapters::Memory.new }

@@ -4,9 +4,9 @@ require "flipper/instrumenters/noop"
 module Flipper
   module Cloud
     class Instrumenter < SimpleDelegator
-      def initialize(options = {})
-        @brow = options.fetch(:brow)
-        @instrumenter = options.fetch(:instrumenter, Instrumenters::Noop)
+      def initialize(brow:, instrumenter: Instrumenters::Noop)
+        @brow = brow
+        @instrumenter = instrumenter
         super @instrumenter
       end
 

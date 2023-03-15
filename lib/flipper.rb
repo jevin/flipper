@@ -9,8 +9,8 @@ module Flipper
 
   # Public: Start here. Given an adapter returns a handy DSL to all the flipper
   # goodness. To see supported options, check out dsl.rb.
-  def new(adapter, options = {})
-    DSL.new(adapter, options)
+  def new(adapter, **options)
+    DSL.new(adapter, **options)
   end
 
   # Public: Configure flipper.

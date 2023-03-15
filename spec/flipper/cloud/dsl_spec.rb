@@ -5,10 +5,10 @@ require 'flipper/adapters/instrumented'
 
 RSpec.describe Flipper::Cloud::DSL do
   it 'delegates everything to flipper instance' do
-    cloud_configuration = Flipper::Cloud::Configuration.new({
+    cloud_configuration = Flipper::Cloud::Configuration.new(
       token: "asdf",
       sync_secret: "tasty",
-    })
+    )
     dsl = described_class.new(cloud_configuration)
     expect(dsl.features).to eq(Set.new)
     expect(dsl.enabled?(:foo)).to be(false)
@@ -21,20 +21,20 @@ RSpec.describe Flipper::Cloud::DSL do
           'Flipper-Cloud-Token'=>'asdf',
         },
       }).to_return(status: 200, body: '{"features": {}}', headers: {})
-    cloud_configuration = Flipper::Cloud::Configuration.new({
+    cloud_configuration = Flipper::Cloud::Configuration.new(
       token: "asdf",
       sync_secret: "tasty",
-    })
+    )
     dsl = described_class.new(cloud_configuration)
     dsl.sync
     expect(stub).to have_been_requested
   end
 
   it 'delegates sync_secret to cloud configuration' do
-    cloud_configuration = Flipper::Cloud::Configuration.new({
+    cloud_configuration = Flipper::Cloud::Configuration.new(
       token: "asdf",
       sync_secret: "tasty",
-    })
+    )
     dsl = described_class.new(cloud_configuration)
     expect(dsl.sync_secret).to eq("tasty")
   end
@@ -45,11 +45,11 @@ RSpec.describe Flipper::Cloud::DSL do
     end
 
     let(:cloud_configuration) do
-      cloud_configuration = Flipper::Cloud::Configuration.new({
+      cloud_configuration = Flipper::Cloud::Configuration.new(
         token: "asdf",
         sync_secret: "tasty",
         local_adapter: local_adapter
-      })
+      )
     end
 
     subject do

@@ -233,7 +233,7 @@ RSpec.describe Flipper::Adapters::Http do
         debug_output: debug_output,
       }
     end
-    subject { described_class.new(options) }
+    subject { described_class.new(**options) }
     let(:feature) { flipper[:feature_panel] }
 
     before do
